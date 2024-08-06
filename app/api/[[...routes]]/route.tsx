@@ -1,28 +1,31 @@
 /** @jsxImportSource frog/jsx */
-import { getMetadata } from "@/app/service/externalApi";
-import { Button, Frog } from "frog";
-import { devtools } from "frog/dev";
-import { handle } from "frog/next";
-import { serveStatic } from "frog/serve-static";
+import { getMetadata } from '@/app/service/externalApi';
+import { Button, Frog } from 'frog';
+import { devtools } from 'frog/dev';
+import { handle } from 'frog/next';
+import { serveStatic } from 'frog/serve-static';
 
 const app = new Frog({
-  title: "STE Frame",
-  basePath: "/api", //root uri
+  title: 'STE Frame',
+  basePath: '/api', //root uri
 });
 
-app.frame("/view/:chain/:contract", async (c) => {
+app.frame('/view/:chain/:contract', async (c) => {
   const { chain, contract } = c.req.param();
-  const { heroImage } = c.req.query();
-  if (chain === ":chain" || contract === ":contract") {
+  const { imagePath, imagePostfix } = c.req.query();
+  if (chain === ':chain' || contract === ':contract') {
     return c.res({
       image: (
-        <div style={{ color: "black", display: "flex", fontSize: 60 }}>
+        <div style={{ color: 'black', display: 'flex', fontSize: 60 }}>
           Error
         </div>
       ),
     });
   }
-  const { actions, meta, name } = await getMetadata(Number(chain), contract as `0x${string}`);
+  const { actions, meta, name } = await getMetadata(
+    Number(chain),
+    contract as `0x${string}`
+  );
   const intents =
     (actions || [])
       .slice(0, 3)
@@ -32,18 +35,32 @@ app.frame("/view/:chain/:contract", async (c) => {
         >
           {action}
         </Button.Link>
-      )) || [];``
+      )) || [];
+  ``;
 
-  const imageUrl = meta.imageUrl || heroImage;
+  // Warpcast don't like the "." in the querystring, so we have to do the string concat to workaround it
+  const customImage = imagePath
+    ? imagePostfix
+      ? `${imagePath}.${imagePostfix}`
+      : imagePath
+    : undefined;
+  const imageUrl = meta.imageUrl || customImage;
 
   return c.res({
     image: (
-      <div style={{ color: "black", display: "flex", fontSize: 60 }}>
+      <div style={{ color: 'black', display: 'flex', fontSize: 60 }}>
         {imageUrl ? (
-          <img src={imageUrl} style={{ height: "100%" }} tw={`mx-auto`} />
+          <img src={imageUrl} style={{ height: '100%' }} tw={`mx-auto`} />
         ) : (
           <div
-            style={{ margin: "0 auto", height: "532px", color: "white", "font-size": "120px", display: "flex", "align-items": "center" }}
+            style={{
+              margin: '0 auto',
+              height: '532px',
+              color: 'white',
+              'font-size': '120px',
+              display: 'flex',
+              'align-items': 'center',
+            }}
           >
             {name}
           </div>
