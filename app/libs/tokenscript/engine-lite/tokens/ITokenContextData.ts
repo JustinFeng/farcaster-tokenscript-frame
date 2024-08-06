@@ -1,4 +1,3 @@
-import {SignedOffchainAttestation} from "@ethereum-attestation-service/eas-sdk";
 import {ITokenDetailData} from "./ITokenDetail";
 
 /**

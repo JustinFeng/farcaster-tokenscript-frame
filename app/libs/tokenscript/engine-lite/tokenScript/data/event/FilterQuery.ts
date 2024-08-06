@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ITokenIdContext, TokenScript } from "../../../tokenscript";
 import { Attributes } from "../../Attributes";
 import { FilterValue } from "./FilterValue";

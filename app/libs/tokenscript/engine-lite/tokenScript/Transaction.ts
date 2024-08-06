@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {EthUtils} from "../ethereum/EthUtils";
 import {TokenScript} from "../tokenscript";
 import {Attributes} from "./Attributes";

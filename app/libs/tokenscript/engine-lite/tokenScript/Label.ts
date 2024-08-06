@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * The label element can be placed in various places in the TokenScript XML.
  * It supports multi-language & plural features

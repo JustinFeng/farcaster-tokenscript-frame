@@ -22,7 +22,7 @@ app.frame("/view/:chain/:contract", async (c) => {
       ),
     });
   }
-  const { actions, meta, name } = await getMetadata(Number(chain), contract);
+  const { actions, meta, name } = await getMetadata(Number(chain), contract as `0x${string}`);
   const intents =
     (actions || [])
       .slice(0, 3)

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { TokenScript } from "../../../tokenscript";
 import { Attributes } from "../../Attributes";
 import { Argument } from "./Argument";

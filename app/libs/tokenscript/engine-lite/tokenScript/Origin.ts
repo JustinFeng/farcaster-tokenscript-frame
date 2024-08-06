@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ethers } from "ethers";
 import { ISecurityInfo, SecurityStatus } from "../security/SecurityInfo";
 import { TrustedKey, TrustedKeyResolver } from "../security/TrustedKeyResolver";

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * Contract represents ts:contract tags that are included in the root tag of a TS (ts:token)
  */

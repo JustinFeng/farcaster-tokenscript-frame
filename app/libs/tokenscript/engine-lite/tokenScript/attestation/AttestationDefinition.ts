@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { computeAddress, keccak256 } from "ethers";
 import { TokenScript } from "../../tokenscript";
 

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {ITokenCollection, TokenType} from "./ITokenCollection";
 import {IAttestationData} from "../attestation/IAttestationStorageAdapter";
 

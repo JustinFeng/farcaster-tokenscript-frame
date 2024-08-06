@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { EthUtils, IEthersArgument } from "../../../ethereum/EthUtils";
 import { ITokenContextData } from "../../../tokens/ITokenContextData";
 import { ITokenIdContext, TokenScript } from "../../../tokenscript";

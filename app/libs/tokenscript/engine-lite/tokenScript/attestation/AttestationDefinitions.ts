@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { TokenScript } from "../../tokenscript";
 import { AttestationDefinition } from "./AttestationDefinition";
 

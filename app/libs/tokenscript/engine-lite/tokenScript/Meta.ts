@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * The meta element is placed in the ts:token element and provides metadata details for the tokenscript file.
  * Currently, description & aboutUrl are used.

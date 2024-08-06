@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { TokenScript } from "../tokenscript";
 import { Contract } from "./Contract";
 

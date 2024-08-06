@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import * as x509 from "@peculiar/x509";
 import * as xmldsigjs from "@tokenscript/xmldsigjs";
 import {

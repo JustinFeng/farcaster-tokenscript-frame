@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { SecurityInfo } from "./security/SecurityInfo";
 import { Card } from "./tokenScript/Card";
 import { Contracts } from "./tokenScript/Contracts";
