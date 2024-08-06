@@ -1,0 +1,67 @@
+/** @jsxImportSource frog/jsx */
+import { getMetadata } from "@/app/service/externalApi";
+import { Button, Frog } from "frog";
+import { devtools } from "frog/dev";
+import { handle } from "frog/next";
+import { serveStatic } from "frog/serve-static";
+
+const app = new Frog({
+  title: "STE Frame",
+  basePath: "/api", //root uri
+});
+
+app.frame("/view/:chain/:contract", async (c) => {
+  const { chain, contract } = c.req.param();
+  const { heroImage } = c.req.query();
+  if (chain === ":chain" || contract === ":contract") {
+    return c.res({
+      image: (
+        <div style={{ color: "black", display: "flex", fontSize: 60 }}>
+          Error
+        </div>
+      ),
+    });
+  }
+  const { actions, meta, name } = await getMetadata(Number(chain), contract);
+  const intents =
+    (actions || [])
+      .slice(0, 3)
+      .map((action) => (
+        <Button.Link
+          href={`https://viewer.tokenscript.org/?chain=${chain}&contract=${contract}#card=${action}`}
+        >
+          {action}
+        </Button.Link>
+      )) || [];``
+
+  const imageUrl = meta.imageUrl || heroImage;
+
+  return c.res({
+    image: (
+      <div style={{ color: "black", display: "flex", fontSize: 60 }}>
+        {imageUrl ? (
+          <img src={imageUrl} style={{ height: "100%" }} tw={`mx-auto`} />
+        ) : (
+          <div
+            style={{ margin: "0 auto", height: "532px", color: "white", "font-size": "120px", display: "flex", "align-items": "center" }}
+          >
+            {name}
+          </div>
+        )}
+      </div>
+    ),
+    intents: [
+      ...intents,
+      <Button.Link
+        href={`https://viewer.tokenscript.org/?chain=${chain}&contract=${contract}`}
+      >
+        More
+      </Button.Link>,
+    ],
+  });
+});
+
+devtools(app, { serveStatic });
+
+export const GET = handle(app);
+export const POST = handle(app);
