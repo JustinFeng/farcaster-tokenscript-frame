@@ -86,8 +86,34 @@ app.frame('/view/:chain/:contract', async (c) => {
         More
       </Button.Link>,
     ],
-    title: metadata?.description || name || undefined,
+    title: metadata?.name || name || undefined,
     ogImage: imageUrl,
+    unstable_metaTags: [
+      {
+        property: 'og:descrition',
+        content: metadata?.description || name || undefined,
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        property: 'twitter:title',
+        content: metadata?.name || name || undefined,
+      },
+      {
+        property: 'twitter:description',
+        content: metadata?.description || name || undefined,
+      },
+      {
+        property: 'twitter:image',
+        content: imageUrl,
+      },
+    ],
   });
 });
 
