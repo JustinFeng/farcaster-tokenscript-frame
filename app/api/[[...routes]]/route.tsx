@@ -86,7 +86,8 @@ app.frame('/view/:chain/:contract', async (c) => {
         More
       </Button.Link>,
     ],
-    title: metadata?.description || name || undefined
+    title: metadata?.description || name || undefined,
+    ogImage: imageUrl,
   });
 });
 
