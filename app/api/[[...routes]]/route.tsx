@@ -1,4 +1,5 @@
 /** @jsxImportSource frog/jsx */
+import { getERC721Metadata } from '@/app/libs/ethereum';
 import { getMetadata } from '@/app/service/externalApi';
 import { Button, Frog } from 'frog';
 import { devtools } from 'frog/dev';
@@ -12,7 +13,7 @@ const app = new Frog({
 
 app.frame('/view/:chain/:contract', async (c) => {
   const { chain, contract } = c.req.param();
-  const { imagePath, imagePostfix } = c.req.query();
+  const { tokenId, imagePath, imagePostfix } = c.req.query();
   if (chain === ':chain' || contract === ':contract') {
     return c.res({
       image: (
@@ -26,6 +27,16 @@ app.frame('/view/:chain/:contract', async (c) => {
     Number(chain),
     contract as `0x${string}`
   );
+
+  let metadata = null;
+  if (tokenId) {
+    metadata = await getERC721Metadata(
+      Number(chain),
+      contract as `0x${string}`,
+      BigInt(tokenId)
+    );
+  }
+
   const intents =
     (actions || [])
       .slice(0, 3)
@@ -44,7 +55,7 @@ app.frame('/view/:chain/:contract', async (c) => {
       ? `${imagePath}.${imagePostfix}`
       : imagePath
     : undefined;
-  const imageUrl = meta.imageUrl || customImage;
+  const imageUrl = metadata?.image || meta.imageUrl || customImage;
 
   return c.res({
     image: (
@@ -75,6 +86,7 @@ app.frame('/view/:chain/:contract', async (c) => {
         More
       </Button.Link>,
     ],
+    title: metadata?.description || name || undefined
   });
 });
 

@@ -1,35 +1,64 @@
-import { createPublicClient, extractChain, http, PublicClient } from "viem";
-import * as chains from "viem/chains";
-import { erc5169ABI } from "./abi/erc5169";
+import {
+  createPublicClient,
+  erc721Abi,
+  extractChain,
+  http,
+  PublicClient,
+} from 'viem';
+import * as chains from 'viem/chains';
+import { erc5169ABI } from './abi/erc5169';
 import {
   getERC5169ScriptURICache,
   setERC5169ScriptURICache,
-} from "./erc5169-scriptURI-cache";
+} from './erc5169-scriptURI-cache';
+import axios from 'axios';
+
+export async function getERC721Metadata(
+  chainId: number,
+  contract: `0x${string}`,
+  tokenId: bigint
+) {
+  try {
+    const client = getBatchClient(chainId);
+
+    const tokenURI = await client.readContract({
+      address: contract,
+      abi: erc721Abi,
+      functionName: 'tokenURI',
+      args: [BigInt(tokenId)],
+    });
+
+    return (await axios.get(tokenURI)).data;
+  } catch(e) {
+    console.log(e)
+    return null;
+  }
+}
 
 export async function getERC5169ScriptURISingle(
   chainId: number,
-  contract: `0x${string}`,
-): Promise<string[] | "not implemented"> {
+  contract: `0x${string}`
+): Promise<string[] | 'not implemented'> {
   let cachedValue = getERC5169ScriptURICache(chainId, contract);
   if (cachedValue !== null) {
     return cachedValue;
   }
   try {
     const onChain = await getERC5169ScriptURI(chainId, contract);
-    const result = onChain === null ? "not implemented" : onChain;
+    const result = onChain === null ? 'not implemented' : onChain;
     setERC5169ScriptURICache(chainId, contract, result);
     return result;
   } catch {
-    setERC5169ScriptURICache(chainId, contract, "not implemented");
-    return "not implemented";
+    setERC5169ScriptURICache(chainId, contract, 'not implemented');
+    return 'not implemented';
   }
 }
 
 export async function getERC5169ScriptURIBatched(
   chainId: number,
-  contractAddresses: `0x${string}`[],
-): Promise<Record<string, string[] | "not implemented">> {
-  const cachedScriptURIs: Record<string, string[] | "not implemented"> = {};
+  contractAddresses: `0x${string}`[]
+): Promise<Record<string, string[] | 'not implemented'>> {
+  const cachedScriptURIs: Record<string, string[] | 'not implemented'> = {};
   for (const each of contractAddresses) {
     const cachedValue = getERC5169ScriptURICache(chainId, each);
     if (cachedValue !== null) {
@@ -46,15 +75,15 @@ export async function getERC5169ScriptURIBatched(
           : getERC5169ScriptURI(chainId, each),
     };
   });
-  let scriptURIs: Record<string, string[] | "not implemented"> = {};
+  let scriptURIs: Record<string, string[] | 'not implemented'> = {};
   for (const each of scriptURIPromises) {
     if (each.scriptURI instanceof Promise) {
       try {
         const result = await each.scriptURI;
         scriptURIs[each.contract] =
-          result === null ? "not implemented" : result;
+          result === null ? 'not implemented' : result;
       } catch {
-        scriptURIs[each.contract] = "not implemented";
+        scriptURIs[each.contract] = 'not implemented';
       }
     } else {
       scriptURIs[each.contract] = each.scriptURI;
@@ -70,7 +99,7 @@ export async function getERC5169ScriptURIBatched(
 
 async function getERC5169ScriptURI(
   chainId: number,
-  contractAddress: `0x${string}`,
+  contractAddress: `0x${string}`
 ) {
   try {
     const client = getBatchClient(chainId);
@@ -79,12 +108,12 @@ async function getERC5169ScriptURI(
       .readContract({
         address: contractAddress,
         abi: erc5169ABI,
-        functionName: "scriptURI",
+        functionName: 'scriptURI',
       })
       .catch((e) => {
         console.log(e);
-        return "not implemented";
-      }) as Promise<string[] | null | "not implemented">;
+        return 'not implemented';
+      }) as Promise<string[] | null | 'not implemented'>;
   } catch {
     return null;
   }
