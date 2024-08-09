@@ -1,23 +1,23 @@
 /** @jsxImportSource frog/jsx */
-import { getERC721Metadata } from '@/app/libs/ethereum';
-import { getMetadata } from '@/app/service/externalApi';
-import { Button, Frog } from 'frog';
-import { devtools } from 'frog/dev';
-import { handle } from 'frog/next';
-import { serveStatic } from 'frog/serve-static';
+import { getERC721Metadata } from "@/app/libs/ethereum";
+import { getMetadata } from "@/app/service/externalApi";
+import { Button, Frog } from "frog";
+import { devtools } from "frog/dev";
+import { handle } from "frog/next";
+import { serveStatic } from "frog/serve-static";
 
 const app = new Frog({
-  title: 'STE Frame',
-  basePath: '/api', //root uri
+  title: "STE Frame",
+  basePath: "/api", //root uri
 });
 
-app.frame('/view/:chain/:contract', async (c) => {
+app.frame("/view/:chain/:contract", async (c) => {
   const { chain, contract } = c.req.param();
   const { tokenId, imagePath, imagePostfix } = c.req.query();
-  if (chain === ':chain' || contract === ':contract') {
+  if (chain === ":chain" || contract === ":contract") {
     return c.res({
       image: (
-        <div style={{ color: 'black', display: 'flex', fontSize: 60 }}>
+        <div style={{ color: "black", display: "flex", fontSize: 60 }}>
           Error
         </div>
       ),
@@ -59,18 +59,18 @@ app.frame('/view/:chain/:contract', async (c) => {
 
   return c.res({
     image: (
-      <div style={{ color: 'black', display: 'flex', fontSize: 60 }}>
+      <div style={{ color: "black", display: "flex", fontSize: 60 }}>
         {imageUrl ? (
-          <img src={imageUrl} style={{ height: '100%' }} tw={`mx-auto`} />
+          <img src={imageUrl} style={{ height: "100%" }} tw={`mx-auto`} />
         ) : (
           <div
             style={{
-              margin: '0 auto',
-              height: '532px',
-              color: 'white',
-              'font-size': '120px',
-              display: 'flex',
-              'align-items': 'center',
+              margin: "0 auto",
+              height: "532px",
+              color: "white",
+              "font-size": "120px",
+              display: "flex",
+              "align-items": "center",
             }}
           >
             {name}
@@ -90,27 +90,27 @@ app.frame('/view/:chain/:contract', async (c) => {
     ogImage: imageUrl,
     unstable_metaTags: [
       {
-        property: 'og:descrition',
+        property: "og:descrition",
         content: metadata?.description || name || undefined,
       },
       {
-        property: 'og:type',
-        content: 'website',
+        property: "og:type",
+        content: "website",
       },
       {
-        property: 'twitter:card',
-        content: 'summary_large_image',
+        property: "twitter:card",
+        content: "summary_large_image",
       },
       {
-        property: 'twitter:title',
+        property: "twitter:title",
         content: metadata?.name || name || undefined,
       },
       {
-        property: 'twitter:description',
+        property: "twitter:description",
         content: metadata?.description || name || undefined,
       },
       {
-        property: 'twitter:image',
+        property: "twitter:image",
         content: imageUrl,
       },
     ],
