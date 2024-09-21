@@ -13,7 +13,7 @@ const app = new Frog({
 
 app.frame("/view/:chain/:contract", async (c) => {
   const { chain, contract } = c.req.param();
-  const { tokenId, imagePath, imagePostfix } = c.req.query();
+  const { tokenId, scriptId, imagePath, imagePostfix } = c.req.query();
   if (chain === ":chain" || contract === ":contract") {
     return c.res({
       image: (
@@ -25,7 +25,8 @@ app.frame("/view/:chain/:contract", async (c) => {
   }
   const { actions, meta, name } = await getMetadata(
     Number(chain),
-    contract as `0x${string}`
+    contract as `0x${string}`,
+    Number(scriptId),
   );
 
   let metadata = null;
