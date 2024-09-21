@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {
+  Chain,
   createPublicClient,
   defineChain,
   erc721Abi,
@@ -9,12 +10,13 @@ import {
 } from 'viem'
 import * as chains from 'viem/chains'
 import { erc5169ABI } from './abi/erc5169'
+import { erc7738ABI } from './abi/erc7738'
 import {
   getERC5169ScriptURICache,
   setERC5169ScriptURICache,
 } from './erc5169-scriptURI-cache'
 
-const customChains: chains.Chain[] = [
+const customChains: Chain[] = [
   defineChain({
     id: 185,
     name: 'Mint Mainnet',
@@ -89,6 +91,34 @@ export async function getERC5169ScriptURISingle(
   } catch {
     setERC5169ScriptURICache(chainId, contract, 'not implemented')
     return 'not implemented'
+  }
+}
+
+export async function getErc7738scriptURI(
+  chainId: number,
+  contract: `0x${string}`,
+  entry?: number,
+) {
+  const client = getBatchClient(chainId)
+  // the registry contract, same address across chains
+  const registryContract = `0x0077380bcdb2717c9640e892b9d5ee02bb5e0682`
+
+  if (entry === undefined) {
+    return (
+      await client.readContract({
+        address: registryContract,
+        abi: erc7738ABI,
+        functionName: 'scriptURI',
+        args: [contract],
+      })
+    )[0]
+  } else {
+    return client.readContract({
+      address: registryContract,
+      abi: erc7738ABI,
+      functionName: 'getScriptURI',
+      args: [BigInt(entry)],
+    })
   }
 }
 

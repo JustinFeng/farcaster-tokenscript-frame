@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getERC5169ScriptURISingle } from '../ethereum'
+import { getERC5169ScriptURISingle, getErc7738scriptURI } from '../ethereum'
 import { TokenScript } from './engine-lite/tokenscript'
 import { Meta } from './engine-lite/tokenScript/Meta'
 import { getTsCache, setTsCache } from './ts-cache'
@@ -23,11 +23,18 @@ export async function getTokenscriptMetadata(
   contract: `0x${string}`,
   options: MetdataOptions = defaultOptions,
   index = 0,
+  entry?: number,
 ): Promise<TsMetadata> {
   const scriptURIs = await getERC5169ScriptURISingle(chainId, contract)
-  const scriptURI = scriptURIs[index]
-  if (scriptURIs === 'not implemented' || !scriptURI)
-    throw new Error('Script URI not exist')
+  let scriptURI = scriptURIs[index]
+  if (scriptURIs === 'not implemented' || !scriptURI) {
+    scriptURI = await getErc7738scriptURI(chainId, contract, entry)
+    console.log('erc7738 scriptURI', scriptURI)
+    if (scriptURI === 'not implemented' || !scriptURI) {
+      console.log('Script URI not exist')
+      throw new Error('Some errors for import, please check the server log')
+    }
+  }
 
   const tokenscript = await loadTokenscript(scriptURI)
 
@@ -46,7 +53,8 @@ export async function getTokenscriptMetadata(
 async function loadTokenscript(scriptURI: string) {
   let tokenscript = getTsCache(scriptURI)
   if (!tokenscript) {
-    const xmlStr = (await axios.get(scriptURI)).data
+    const httpUrl = rewriteUrlIfIpfsUrl(scriptURI)
+    const xmlStr = (await axios.get(httpUrl)).data
 
     let parser
     if (typeof process !== 'undefined' && process.release.name === 'node') {
@@ -62,4 +70,20 @@ async function loadTokenscript(scriptURI: string) {
   }
 
   return tokenscript
+}
+
+function rewriteUrlIfIpfsUrl(url: string) {
+  if (!url) {
+    return ''
+  } else if (url.toLowerCase().startsWith('https://ipfs.io/ipfs')) {
+    return url.replace(
+      'https://ipfs.io/ipfs',
+      'https://gateway.pinata.cloud/ipfs',
+    )
+  } else if (url.toLowerCase().startsWith('ipfs://ipfs')) {
+    return url.replace('ipfs://ipfs', 'https://gateway.pinata.cloud/ipfs')
+  } else if (url.toLowerCase().startsWith('ipfs://')) {
+    return url.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')
+  }
+  return url
 }
